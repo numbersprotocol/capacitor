@@ -216,19 +216,19 @@ public class WebViewLocalServer {
         }
         tempResponseHeaders.put("Accept-Ranges", "bytes");
         tempResponseHeaders.put("Content-Range", "bytes " + fromRange + "-" + range + "/" + totalRange);
+        if (Integer.parseInt(fromRange) >= totalRange) {
+            statusCode = 416;
+            return new WebResourceResponse(
+                mimeType,
+                handler.getEncoding(),
+                statusCode,
+                handler.getReasonPhrase(),
+                tempResponseHeaders,
+                null
+            );
+        }
       } catch (IOException e) {
         statusCode = 404;
-      }
-      if (Integer.parseInt(fromRange) >= totalRange) {
-        statusCode = 416;
-        return new WebResourceResponse(
-            mimeType,
-            handler.getEncoding(),
-            statusCode,
-            handler.getReasonPhrase(),
-            tempResponseHeaders,
-            null
-        );
       }
       return new WebResourceResponse(mimeType, handler.getEncoding(),
               statusCode, handler.getReasonPhrase(), tempResponseHeaders, responseStream);
